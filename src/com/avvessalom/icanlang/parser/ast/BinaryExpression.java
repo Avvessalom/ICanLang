@@ -23,4 +23,9 @@ public class BinaryExpression implements Expression {
                 return 0;
         }
     }
+
+    @Override
+    public String toString() {
+        return String.format("%s %c %s", expr1, operation, expr2);
+    }
 }

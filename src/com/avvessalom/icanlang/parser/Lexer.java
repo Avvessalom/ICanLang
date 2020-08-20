@@ -5,10 +5,11 @@ import java.util.List;
 
 public final class Lexer {
 
-    private static final String OPERATOR_CHARS = "+-*/";
+    private static final String OPERATOR_CHARS = "+-*/()";
     private static final TokenType[] OPERATOR_TOKENS = {
             TokenType.PLUS, TokenType.MINUS,
-            TokenType.STAR, TokenType.SLASH
+            TokenType.STAR, TokenType.SLASH,
+            TokenType.LPAREN, TokenType.RPAREN
     };
 
     private final String input;
@@ -29,6 +30,10 @@ public final class Lexer {
         while (pos < length) {
             final char current = peek(0);
             if (Character.isDigit(current)) tokenizeNumber();
+            else if (current == '#') {
+                next();
+                tokenizeHexNumber();
+            }
             else if (OPERATOR_CHARS.indexOf(current) != -1) {
                 tokenizeOperator();
             } else {
@@ -46,6 +51,16 @@ public final class Lexer {
             current = next();
         }
         addToken(TokenType.NUMBER, buffer.toString());
+    }
+
+    private void tokenizeHexNumber(){
+        final StringBuilder buffer = new StringBuilder();
+        char current = peek(0);
+        while (Character.isDigit(current) || ("abcdf".indexOf(Character.toLowerCase(current))) != -1) {
+            buffer.append(current);
+            current = next();
+        }
+        addToken(TokenType.HEX_NUMBER, buffer.toString());
     }
 
     private void tokenizeOperator(){

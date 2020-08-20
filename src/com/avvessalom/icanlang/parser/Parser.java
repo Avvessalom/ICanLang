@@ -3,7 +3,9 @@ package com.avvessalom.icanlang.parser;
 import com.avvessalom.icanlang.parser.ast.BinaryExpression;
 import com.avvessalom.icanlang.parser.ast.Expression;
 import com.avvessalom.icanlang.parser.ast.NumberExpression;
+import com.avvessalom.icanlang.parser.ast.UnaryExpression;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Parser {
@@ -18,8 +20,12 @@ public class Parser {
         size = tokens.size();
     }
 
-    public List<Exception> parse() {
-        return null;
+    public List<Expression> parse() {
+        final List<Expression> result = new ArrayList<>();
+        while (!match(TokenType.EOF)) {
+            result.add(expression());
+        }
+        return result;
     }
 
     private Expression expression() {
@@ -61,6 +67,12 @@ public class Parser {
     }
 
     private Expression unary() {
+        if (match(TokenType.MINUS)) {
+            return new UnaryExpression('-', primary());
+        }
+        if (match(TokenType.PLUS)) {
+            return new UnaryExpression('+', primary());
+        }
         return primary();
     }
 
@@ -68,6 +80,14 @@ public class Parser {
         final Token current = get(0);
         if (match(TokenType.NUMBER)) {
             return new NumberExpression(Double.parseDouble(current.getText()));
+        }
+        if (match(TokenType.HEX_NUMBER)) {
+            return new NumberExpression(Long.parseLong(current.getText(), 16));
+        }
+        if (match(TokenType.LPAREN)) {
+            Expression result = expression();
+            match(TokenType.RPAREN);
+            return result;
         }
         throw new RuntimeException("Unknown expression");
     }
