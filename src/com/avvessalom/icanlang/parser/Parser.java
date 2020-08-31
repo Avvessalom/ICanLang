@@ -1,9 +1,6 @@
 package com.avvessalom.icanlang.parser;
 
-import com.avvessalom.icanlang.parser.ast.BinaryExpression;
-import com.avvessalom.icanlang.parser.ast.Expression;
-import com.avvessalom.icanlang.parser.ast.NumberExpression;
-import com.avvessalom.icanlang.parser.ast.UnaryExpression;
+import com.avvessalom.icanlang.parser.ast.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -83,6 +80,9 @@ public class Parser {
         }
         if (match(TokenType.HEX_NUMBER)) {
             return new NumberExpression(Long.parseLong(current.getText(), 16));
+        }
+        if (match(TokenType.WORD)) {
+            return new ConstantExpression(current.getText());
         }
         if (match(TokenType.LPAREN)) {
             Expression result = expression();

@@ -2,17 +2,18 @@ package com.avvessalom.icanlang.parser;
 
 public enum TokenType {
 
-    NUMBER,
-    HEX_NUMBER,
-    BIN_NUMBER,
+    NUMBER,      // 10th numbers
+    HEX_NUMBER,  // 16th numbers
+    BIN_NUMBER,  //2th numbers
+    WORD,   // constant or words
 
-    PLUS,   //+
-    MINUS,  //-
-    STAR,   //*
+    PLUS,   // +
+    MINUS,  // -
+    STAR,   // *
     SLASH,  // /
 
     LPAREN, // (
-    RPAREN, //)
+    RPAREN, // )
 
     EOF     // End Of File
 }

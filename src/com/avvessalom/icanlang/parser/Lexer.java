@@ -9,7 +9,8 @@ public final class Lexer {
     private static final TokenType[] OPERATOR_TOKENS = {
             TokenType.PLUS, TokenType.MINUS,
             TokenType.STAR, TokenType.SLASH,
-            TokenType.LPAREN, TokenType.RPAREN
+            TokenType.LPAREN, TokenType.RPAREN,
+            TokenType.WORD
     };
 
     private final String input;
@@ -30,6 +31,7 @@ public final class Lexer {
         while (pos < length) {
             final char current = peek(0);
             if (Character.isDigit(current)) tokenizeNumber();
+            else if (Character.isLetter(current)) tokenizeWord();
             else if (current == '#') {
                 next();
                 tokenizeHexNumber();
@@ -46,7 +48,10 @@ public final class Lexer {
     private void tokenizeNumber(){
         final StringBuilder buffer = new StringBuilder();
         char current = peek(0);
-        while (Character.isDigit(current)) {
+        while (true) {
+            if (current == '.') {
+                if (buffer.indexOf(".") != -1) throw new RuntimeException("Invalid (float number)/(ты)");
+            } else if (!Character.isDigit(current)){ break;}
             buffer.append(current);
             current = next();
         }
@@ -61,6 +66,16 @@ public final class Lexer {
             current = next();
         }
         addToken(TokenType.HEX_NUMBER, buffer.toString());
+    }
+
+    private void tokenizeWord() {
+        final StringBuilder buffer = new StringBuilder();
+        char current = peek(0);
+        while (Character.isLetterOrDigit(current) || (current == '_') || (current == '$')) {
+            buffer.append(current);
+            current = next();
+        }
+        addToken(TokenType.WORD, buffer.toString());
     }
 
     private void tokenizeOperator(){
